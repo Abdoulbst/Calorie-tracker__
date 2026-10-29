@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calorie Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <h1>🔥 Calorie Tracker</h1>
+      <p class="header-date" id="header-date"></p>
+    </header>
+
+    <!-- Daily Summary Card -->
+    <section class="summary-card">
+      <div class="summary-top">
+        <div class="summary-consumed">
+          <span class="summary-number" id="total-calories">0</span>
+          <span class="summary-label">Consumed</span>
+        </div>
+        <div class="summary-ring" id="summary-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="ring-text">
+            <span id="ring-percent">0%</span>
+          </div>
+        </div>
+        <div class="summary-remaining">
+          <span class="summary-number" id="remaining-calories">2000</span>
+          <span class="summary-label">Remaining</span>
+        </div>
+      </div>
+      <div class="calorie-bar-container">
+        <div class="calorie-bar" id="calorie-bar"></div>
+      </div>
+      <div class="goal-row">
+        <span>Daily Goal:</span>
+        <button class="goal-btn" id="goal-btn">
+          <span id="goal-display">2000</span> kcal ✏️
+        </button>
+      </div>
+    </section>
+
+    <!-- Macro Summary -->
+    <section class="macros-card">
+      <div class="macro">
+        <div class="macro-icon" style="background:#ff6b6b;">🍖</div>
+        <div class="macro-info">
+          <span class="macro-value" id="macro-protein">0g</span>
+          <span class="macro-name">Protein</span>
+        </div>
+      </div>
+      <div class="macro">
+        <div class="macro-icon" style="background:#feca57;">🍞</div>
+        <div class="macro-info">
+          <span class="macro-value" id="macro-carbs">0g</span>
+          <span class="macro-name">Carbs</span>
+        </div>
+      </div>
+      <div class="macro">
+        <div class="macro-icon" style="background:#48dbfb;">🥑</div>
+        <div class="macro-info">
+          <span class="macro-value" id="macro-fat">0g</span>
+          <span class="macro-name">Fat</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Date Navigation -->
+    <section class="date-nav">
+      <button class="date-arrow" id="prev-day">&#8592;</button>
+      <button class="date-picker-btn" id="date-picker-btn"></button>
+      <button class="date-arrow" id="next-day">&#8594;</button>
+      <input type="date" id="date-picker-input" class="hidden-date-input" />
+    </section>
+
+    <!-- Add Entry Form -->
+    <section class="add-entry-section">
+      <button class="add-btn" id="toggle-form-btn">+ Add Food</button>
+      <form class="entry-form hidden" id="entry-form">
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="food-name">Food Name</label>
+            <input type="text" id="food-name" placeholder="e.g. Grilled Chicken" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="food-calories">Calories</label>
+            <input type="number" id="food-calories" placeholder="kcal" min="0" required />
+          </div>
+          <div class="form-group">
+            <label for="food-protein">Protein (g)</label>
+            <input type="number" id="food-protein" placeholder="0" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="food-carbs">Carbs (g)</label>
+            <input type="number" id="food-carbs" placeholder="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label for="food-fat">Fat (g)</label>
+            <input type="number" id="food-fat" placeholder="0" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="food-meal">Meal</label>
+            <select id="food-meal">
+              <option value="breakfast">🌅 Breakfast</option>
+              <option value="lunch">☀️ Lunch</option>
+              <option value="dinner">🌙 Dinner</option>
+              <option value="snack">🍿 Snack</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancel-form-btn">Cancel</button>
+          <button type="submit" class="btn-submit">Add Entry</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Meal Sections -->
+    <section class="meals-section" id="meals-section">
+      <!-- Dynamically populated -->
+    </section>
+
+    <!-- History / Weekly Overview -->
+    <section class="history-section">
+      <h2 class="section-title">Last 7 Days</h2>
+      <div class="history-chart" id="history-chart">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Goal Modal -->
+  <div class="modal-overlay hidden" id="goal-modal">
+    <div class="modal">
+      <h3>Set Daily Goal</h3>
+      <input type="number" id="goal-input" min="500" max="10000" placeholder="e.g. 2000" />
+      <div class="modal-actions">
+        <button class="btn-cancel" id="goal-cancel">Cancel</button>
+        <button class="btn-submit" id="goal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay hidden" id="edit-modal">
+    <div class="modal">
+      <h3>Edit Entry</h3>
+      <div class="form-group">
+        <label for="edit-food-name">Food Name</label>
+        <input type="text" id="edit-food-name" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit-food-calories">Calories</label>
+          <input type="number" id="edit-food-calories" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="edit-food-protein">Protein (g)</label>
+          <input type="number" id="edit-food-protein" min="0" step="0.1" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit-food-carbs">Carbs (g)</label>
+          <input type="number" id="edit-food-carbs" min="0" step="0.1" />
+        </div>
+        <div class="form-group">
+          <label for="edit-food-fat">Fat (g)</label>
+          <input type="number" id="edit-food-fat" min="0" step="0.1" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="edit-food-meal">Meal</label>
+        <select id="edit-food-meal">
+          <option value="breakfast">🌅 Breakfast</option>
+          <option value="lunch">☀️ Lunch</option>
+          <option value="dinner">🌙 Dinner</option>
+          <option value="snack">🍿 Snack</option>
+        </select>
+      </div>
+      <input type="hidden" id="edit-entry-id" />
+      <div class="modal-actions">
+        <button class="btn-cancel" id="edit-cancel">Cancel</button>
+        <button class="btn-submit" id="edit-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
